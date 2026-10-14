@@ -12,7 +12,7 @@ function fenced(lines: string[]): string {
 }
 
 const usage = fenced([
-  "usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] FILE",
+  "usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] [--max-depth N] FILE",
   "       spanflame folded [--trace ID] FILE",
   "       spanflame top [--trace ID] [--unit us|ms] [--limit N] FILE",
   "       spanflame check [--trace ID] FILE",

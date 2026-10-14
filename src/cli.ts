@@ -15,7 +15,7 @@ export interface Io {
 }
 
 const USAGE = [
-  "usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] FILE",
+  "usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] [--max-depth N] FILE",
   "       spanflame folded [--trace ID] FILE",
   "       spanflame top [--trace ID] [--unit us|ms] [--limit N] FILE",
   "       spanflame check [--trace ID] FILE",
@@ -73,7 +73,11 @@ function execute(args: string[], io: Io): number {
   }
   let view: string;
   if (parsed.command === "tree") {
-    view = renderTree(traces, { unit: parsed.unit, minTotal: parsed.minTotal });
+    view = renderTree(traces, {
+      unit: parsed.unit,
+      minTotal: parsed.minTotal,
+      maxDepth: parsed.maxDepth,
+    });
   } else if (parsed.command === "folded") {
     view = renderFolded(traces);
   } else {
