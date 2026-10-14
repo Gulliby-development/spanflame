@@ -22,7 +22,7 @@ Run it with `bun run src/main.ts tree FILE`. There is no build step.
 ## Usage
 
 ```
-usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] FILE
+usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] [--max-depth N] FILE
        spanflame folded [--trace ID] FILE
        spanflame top [--trace ID] [--unit us|ms] [--limit N] FILE
        spanflame check [--trace ID] FILE
@@ -41,7 +41,7 @@ FILE is a path or `-` for standard input. The file `trace.jsonl` (the last two l
 {"trace":"t2","id":"y","parent":"x","name":"db.query","start":5010,"end":5060}
 ```
 
-`spanflame tree trace.jsonl` prints the trees. Options: `--trace ID` keeps one trace, `--unit us|ms` chooses the unit, `--min-total N` leaves out spans whose total is below N microseconds.
+`spanflame tree trace.jsonl` prints the trees. Options: `--trace ID` keeps one trace, `--unit us|ms` chooses the unit, `--min-total N` leaves out spans whose total is below N microseconds, `--max-depth N` leaves out spans below level N.
 
 ```
 trace t1 (5 spans)
@@ -50,6 +50,19 @@ trace t1 (5 spans)
     db.query 900us (self 300us)
       db.fetch 500us (self 500us)
       db.fetch 300us (self 300us)
+
+trace t2 (2 spans)
+  GET /health 100us (self 50us)
+    db.query 50us (self 50us)
+```
+
+`--max-depth N` (a whole number from 1 to 1000, `tree` only) keeps the first N levels of every tree: a root is level 1, its children level 2, and a span that is left out takes its children with it. The count in the `trace` heading and the self times stay as they are. `spanflame tree --max-depth 2 trace.jsonl` prints:
+
+```
+trace t1 (5 spans)
+  GET /users 1500us (self 400us)
+    auth 200us (self 200us)
+    db.query 900us (self 300us)
 
 trace t2 (2 spans)
   GET /health 100us (self 50us)

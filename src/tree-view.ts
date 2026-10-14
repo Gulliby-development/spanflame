@@ -4,6 +4,7 @@ import type { Node, Trace } from "./types";
 export interface TreeOptions {
   unit: "us" | "ms";
   minTotal: number;
+  maxDepth?: number;
 }
 
 export function renderTree(traces: Trace[], options: TreeOptions): string {
@@ -25,8 +26,10 @@ export function renderTree(traces: Trace[], options: TreeOptions): string {
       const total = formatDuration(node.total, options.unit);
       const self = formatDuration(node.self, options.unit);
       lines.push(`${"  ".repeat(depth)}${escapeText(node.span.name)} ${total} (self ${self})`);
-      for (let i = node.children.length - 1; i >= 0; i--) {
-        stack.push([node.children[i] as Node, depth + 1]);
+      if (options.maxDepth === undefined || depth < options.maxDepth) {
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          stack.push([node.children[i] as Node, depth + 1]);
+        }
       }
     }
   });

@@ -13,11 +13,12 @@ export interface RunArgs {
   trace?: string;
   unit: "us" | "ms";
   minTotal: number;
+  maxDepth?: number;
   limit: number;
 }
 
 const COMMANDS: readonly string[] = ["tree", "folded", "top", "check"];
-const OPTIONS = ["--trace", "--unit", "--min-total", "--limit"] as const;
+const OPTIONS = ["--trace", "--unit", "--min-total", "--max-depth", "--limit"] as const;
 const NUMBER = /^(0|[1-9][0-9]*)$/;
 
 function parseNumber(value: string, min: number, max: number): number | null {
@@ -81,6 +82,17 @@ export function parseArgs(args: string[]): HelpArgs | RunArgs {
     }
     minTotal = n;
   }
+  const maxDepthValue = values.get("--max-depth");
+  let maxDepth: number | undefined;
+  if (maxDepthValue !== undefined) {
+    const n = parseNumber(maxDepthValue, 1, 1000);
+    if (n === null) {
+      throw new UsageError(
+        `invalid --max-depth "${maxDepthValue}" (expected a whole number from 1 to 1000)`,
+      );
+    }
+    maxDepth = n;
+  }
   const limitValue = values.get("--limit");
   let limit = 10;
   if (limitValue !== undefined) {
@@ -97,6 +109,9 @@ export function parseArgs(args: string[]): HelpArgs | RunArgs {
   }
   if (minValue !== undefined && command !== "tree") {
     throw new UsageError("--min-total is only valid for tree");
+  }
+  if (maxDepthValue !== undefined && command !== "tree") {
+    throw new UsageError("--max-depth is only valid for tree");
   }
   if (limitValue !== undefined && command !== "top") {
     throw new UsageError("--limit is only valid for top");
@@ -116,6 +131,9 @@ export function parseArgs(args: string[]): HelpArgs | RunArgs {
     minTotal,
     limit,
   };
+  if (maxDepth !== undefined) {
+    result.maxDepth = maxDepth;
+  }
   const trace = values.get("--trace");
   if (trace !== undefined) {
     result.trace = trace;
