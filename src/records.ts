@@ -19,13 +19,13 @@ function checkLine(value: unknown, line: number): Span | string {
   if (!isNonEmptyString(trace)) return '"trace" must be a non-empty string';
   if (!isNonEmptyString(id)) return '"id" must be a non-empty string';
   if (!isNonEmptyString(name)) return '"name" must be a non-empty string';
-  if (parent !== undefined && parent !== null && !isNonEmptyString(parent)) {
+  if (parent !== undefined && parent !== null && parent !== "" && !isNonEmptyString(parent)) {
     return '"parent" must be a non-empty string or null';
   }
   if (!isWhole(start)) return '"start" must be a whole number from 0 to 1000000000';
   if (!isWhole(end)) return '"end" must be a whole number from 0 to 1000000000';
   if (end < start) return '"end" is before "start"';
-  return { trace, id, parent: parent ?? null, name, start, end, line };
+  return { trace, id, parent: parent === "" ? null : (parent ?? null), name, start, end, line };
 }
 
 export function parseSpans(text: string, display: string): Span[] {

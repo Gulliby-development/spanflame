@@ -98,7 +98,7 @@ GET /users;db.query;db.fetch 800
 UTF-8 text, one JSON object per line. Lines end with LF or CRLF, a leading BOM is ignored, and blank lines are skipped. Fields:
 
 - `trace`, `id`, `name`: non-empty strings.
-- `parent`: absent, `null` or a non-empty string (absent or `null` is a root).
+- `parent`: absent, `null`, an empty string or a non-empty string (absent, `null` and an empty string are a root).
 - `start`, `end`: JSON numbers with a whole value from 0 to 1000000000 (microseconds); `end` must not be below `start`.
 
 Unknown keys are ignored. The first bad line stops the run with exit 2.
