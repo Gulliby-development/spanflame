@@ -115,8 +115,8 @@ describe("parseSpans errors", () => {
       '"name" must be a non-empty string',
     ],
     [
-      "empty parent",
-      '{"trace":"t","id":"a","parent":"","name":"n","start":0,"end":1}',
+      "boolean parent",
+      '{"trace":"t","id":"a","parent":true,"name":"n","start":0,"end":1}',
       '"parent" must be a non-empty string or null',
     ],
     [
