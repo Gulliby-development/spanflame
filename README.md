@@ -91,6 +91,15 @@ GET /users;db.query;db.fetch 800
  50us      1   2.8%  GET /health
 ```
 
+A name that has some self time but less than 0.05% of the total shows `<0.1%` in the SHARE column, so it is not mistaken for a name with no self time (that one shows `0.0%`). For a root `job` of 100000us with two child spans, `edge` of 50us and `under` of 49us:
+
+```
+   SELF  COUNT  SHARE  NAME
+99901us      1  99.9%  job
+   50us      1   0.1%  edge
+   49us      1  <0.1%  under
+```
+
 `spanflame check trace.jsonl` prints one line per problem and exits 1, or a short ok line and exits 0.
 
 ## Input format
