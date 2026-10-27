@@ -17,6 +17,9 @@ function formatShare(self: number, total: bigint): string {
     return "0.0%";
   }
   const tenths = (2n * BigInt(self) * 1000n + total) / (2n * total);
+  if (tenths === 0n && self > 0) {
+    return "<0.1%";
+  }
   return `${tenths / 10n}.${tenths % 10n}%`;
 }
 
