@@ -15,10 +15,18 @@ export interface RunArgs {
   minTotal: number;
   maxDepth?: number;
   limit: number;
+  minSelf?: number;
 }
 
 const COMMANDS: readonly string[] = ["tree", "folded", "top", "check"];
-const OPTIONS = ["--trace", "--unit", "--min-total", "--max-depth", "--limit"] as const;
+const OPTIONS = [
+  "--trace",
+  "--unit",
+  "--min-total",
+  "--max-depth",
+  "--limit",
+  "--min-self",
+] as const;
 const NUMBER = /^(0|[1-9][0-9]*)$/;
 
 function parseNumber(value: string, min: number, max: number): number | null {
@@ -104,6 +112,17 @@ export function parseArgs(args: string[]): HelpArgs | RunArgs {
     }
     limit = n;
   }
+  const minSelfValue = values.get("--min-self");
+  let minSelf = 0;
+  if (minSelfValue !== undefined) {
+    const n = parseNumber(minSelfValue, 0, 1000000000);
+    if (n === null) {
+      throw new UsageError(
+        `invalid --min-self "${minSelfValue}" (expected a whole number from 0 to 1000000000)`,
+      );
+    }
+    minSelf = n;
+  }
   if (unitValue !== undefined && (command === "folded" || command === "check")) {
     throw new UsageError(`--unit is not valid for ${command}`);
   }
@@ -115,6 +134,9 @@ export function parseArgs(args: string[]): HelpArgs | RunArgs {
   }
   if (limitValue !== undefined && command !== "top") {
     throw new UsageError("--limit is only valid for top");
+  }
+  if (minSelfValue !== undefined && command !== "top") {
+    throw new UsageError("--min-self is only valid for top");
   }
   const file = positionals[0];
   if (file === undefined) {
@@ -133,6 +155,9 @@ export function parseArgs(args: string[]): HelpArgs | RunArgs {
   };
   if (maxDepth !== undefined) {
     result.maxDepth = maxDepth;
+  }
+  if (minSelfValue !== undefined) {
+    result.minSelf = minSelf;
   }
   const trace = values.get("--trace");
   if (trace !== undefined) {

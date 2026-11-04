@@ -24,7 +24,7 @@ Run it with `bun run src/main.ts tree FILE`. There is no build step.
 ```
 usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] [--max-depth N] FILE
        spanflame folded [--trace ID] FILE
-       spanflame top [--trace ID] [--unit us|ms] [--limit N] FILE
+       spanflame top [--trace ID] [--unit us|ms] [--limit N] [--min-self N] FILE
        spanflame check [--trace ID] FILE
 ```
 
@@ -98,6 +98,15 @@ A name that has some self time but less than 0.05% of the total shows `<0.1%` in
 99901us      1  99.9%  job
    50us      1   0.1%  edge
    49us      1  <0.1%  under
+```
+
+`--min-self N` (a whole number from 0 to 1000000000 microseconds, `top` only) leaves out the names whose self time is below N; a name with exactly N stays. The SHARE column keeps the total of all names, so the shares do not change, and `--limit` counts the names that stay. `spanflame top --min-self 300 trace.jsonl` prints:
+
+```
+ SELF  COUNT  SHARE  NAME
+800us      2  44.4%  db.fetch
+400us      1  22.2%  GET /users
+350us      2  19.4%  db.query
 ```
 
 `spanflame check trace.jsonl` prints one line per problem and exits 1, or a short ok line and exits 0.

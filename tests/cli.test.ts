@@ -93,7 +93,7 @@ describe("cli help and usage", () => {
       out: lines(
         "usage: spanflame tree [--trace ID] [--unit us|ms] [--min-total N] [--max-depth N] FILE",
         "       spanflame folded [--trace ID] FILE",
-        "       spanflame top [--trace ID] [--unit us|ms] [--limit N] FILE",
+        "       spanflame top [--trace ID] [--unit us|ms] [--limit N] [--min-self N] FILE",
         "       spanflame check [--trace ID] FILE",
       ),
     });
