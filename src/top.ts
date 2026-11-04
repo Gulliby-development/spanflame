@@ -4,6 +4,7 @@ import type { Node, Trace } from "./types";
 export interface TopOptions {
   unit: "us" | "ms";
   limit: number;
+  minSelf?: number;
 }
 
 interface Row {
@@ -51,7 +52,9 @@ export function renderTop(traces: Trace[], options: TopOptions): string {
     return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
   });
   const cells: string[][] = [["SELF", "COUNT", "SHARE", "NAME"]];
-  for (const row of rows.slice(0, options.limit)) {
+  const minSelf = options.minSelf ?? 0;
+  const kept = rows.filter((row) => row.self >= minSelf);
+  for (const row of kept.slice(0, options.limit)) {
     cells.push([
       formatDuration(row.self, options.unit),
       String(row.count),
